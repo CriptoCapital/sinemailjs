@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro - CriptoCapital</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #161b22;
+      color: #e6e6e6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #1e242c;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #f1c40f;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: none;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    input, select {
+      background: #2c333b;
+      color: #e6e6e6;
+    }
+    button {
+      background: #f1c40f;
+      color: #161b22;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #d4ac0d;
+    }
+    p {
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 10px;
+    }
+    a {
+      color: #f1c40f;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 480px) {
+      .container {
+        padding: 1.5rem;
+      }
+      input, select, button {
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Crear Cuenta</h2>
+    <form id="registerForm">
+      <input type="text" id="fullName" placeholder="Nombre completo" required>
+      <input type="email" id="email" placeholder="Correo electrónico" required>
+      <input type="password" id="password" placeholder="Contraseña" required>
+      
+      <select id="country" required>
+        <option value="">Selecciona tu país</option>
+        <option value="Argentina">Argentina</option>
+        <option value="Bolivia">Bolivia</option>
+        <option value="Chile">Chile</option>
+        <option value="Colombia">Colombia</option>
+        <option value="Costa Rica">Costa Rica</option>
+        <option value="Cuba">Cuba</option>
+        <option value="Ecuador">Ecuador</option>
+        <option value="El Salvador">El Salvador</option>
+        <option value="España">España</option>
+        <option value="Guatemala">Guatemala</option>
+        <option value="Honduras">Honduras</option>
+        <option value="México">México</option>
+        <option value="Nicaragua">Nicaragua</option>
+        <option value="Panamá">Panamá</option>
+        <option value="Paraguay">Paraguay</option>
+        <option value="Perú">Perú</option>
+        <option value="Puerto Rico">Puerto Rico</option>
+        <option value="República Dominicana">República Dominicana</option>
+        <option value="Uruguay">Uruguay</option>
+        <option value="Venezuela">Venezuela</option>
+      </select>
+
+      <select id="currency" required>
+        <option value="">Selecciona tu moneda</option>
+      </select>
+
+      <button type="submit">Registrarse</button>
+    </form>
+    <p>Al registrarte, aceptas los <a href="#">Términos de Servicio</a> y la <a href="#">Política de Privacidad</a> de CriptoCapital.</p>
+    <p>¿Ya tienes una cuenta? <a href="login.html">Iniciar Sesión</a></p>
+  </div>
+
+  <!-- Load EmailJS SDK -->
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
+  (function(){
+    emailjs.init("en2aL2EyGGfSiLfWB"); // ✅ Replace with your actual EmailJS Public Key
+  })();
+
+  function sendWelcomeEmail(userEmail, userFullName) {
+    emailjs.send("service_rki3k59", "template_0qw6l2a", {
+      to_email: userEmail,
+      name: userFullName   // ✅ use the parameter you passed in
+    }).then((response) => {
+      console.log("✅ Welcome email sent:", response.status, response.text);
+    }).catch((error) => {
+      console.error("❌ Email send failed:", error);
+    });
+  }
+</script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCU7EPLJj5c2pqmH-61mAzrRmbDS9uWy4g",
+      authDomain: "criptocapital-282e8.firebaseapp.com",
+      projectId: "criptocapital-282e8",
+      storageBucket: "criptocapital-282e8.appspot.com",
+      messagingSenderId: "128924080781",
+      appId: "1:128924080781:web:95099f6060998df32de0c4"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Country -> Currency map
+    const countryCurrency = {
+      "Argentina": "ARS",
+      "Bolivia": "BOB",
+      "Chile": "CLP",
+      "Colombia": "COP",
+      "Costa Rica": "CRC",
+      "Cuba": "CUP",
+      "Ecuador": "USD",
+      "El Salvador": "USD",
+      "España": "EUR",
+      "Guatemala": "GTQ",
+      "Honduras": "HNL",
+      "México": "MXN",
+      "Nicaragua": "NIO",
+      "Panamá": "PAB",
+      "Paraguay": "PYG",
+      "Perú": "PEN",
+      "Puerto Rico": "USD",
+      "República Dominicana": "DOP",
+      "Uruguay": "UYU",
+      "Venezuela": "VES"
+    };
+
+    document.getElementById("country").addEventListener("change", function() {
+      const currencySelect = document.getElementById("currency");
+      currencySelect.innerHTML = "";
+      const selectedCountry = this.value;
+      if (selectedCountry && countryCurrency[selectedCountry]) {
+        const option = document.createElement("option");
+        option.value = countryCurrency[selectedCountry];
+        option.textContent = countryCurrency[selectedCountry];
+        currencySelect.appendChild(option);
+      } else {
+        const option = document.createElement("option");
+        option.value = "";
+        option.textContent = "Selecciona tu moneda";
+        currencySelect.appendChild(option);
+      }
+    });
+
+    // Register user
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const fullName = document.getElementById("fullName").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const country = document.getElementById("country").value;
+      const currency = document.getElementById("currency").value;
+
+      try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        await db.collection("users").doc(user.uid).set({
+          fullName,
+          email,
+          country,
+          currency,
+          balance: 0,
+          deposit: 0,
+          withdraw: 0,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // ✅ Send Welcome Email
+        sendWelcomeEmail(email, fullName);
+
+        alert("Cuenta creada con éxito ✅");
+        window.location.href = "login.html";
+      } catch (error) {
+        alert("Error: " + error.message);
+      }
+    });
+  </script>
+</body>
+</html>
